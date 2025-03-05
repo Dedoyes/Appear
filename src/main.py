@@ -1,4 +1,5 @@
 import pygame
+import utils
 
 if __name__ == '__main__' : 
     pygame.init ()
@@ -11,7 +12,7 @@ if __name__ == '__main__' :
     button_color = (255, 255, 255)
     text_color = (0, 0, 0)
 
-    button_font = pygame.font.Font ('../font/0xProtoNerdFont-Regular.ttf', 20)
+    button_font = pygame.font.Font ('./font/0xProtoNerdFont-Regular.ttf', 20)
     button_text = button_font.render ("Button", True, text_color)
 
     running = True 
