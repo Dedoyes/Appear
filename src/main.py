@@ -1,30 +1,36 @@
 import pygame
 import utils
+import button
+import sys
 
 if __name__ == '__main__' : 
     pygame.init ()
     width, height = 800, 600
     screen = pygame.display.set_mode ((width, height))
+    screen.fill (utils.WHITE)
     pygame.display.set_caption ("Appear")
 
-    bx, by, bw, bh = 350, 250, 100, 50
-    button_rect = pygame.Rect (bx, by, bw, bh)
-    button_color = (255, 255, 255)
-    text_color = (0, 0, 0)
+    drawing = False 
+    last_pos = (0, 0)
+    running = True
 
-    button_font = pygame.font.Font ('./font/0xProtoNerdFont-Regular.ttf', 20)
-    button_text = button_font.render ("Button", True, text_color)
-
-    running = True 
     while running : 
-        screen.fill ((0, 0, 0))
-        pygame.draw.rect (screen, button_color, button_rect)
-        screen.blit (button_text, (button_rect.centerx - button_text.get_width() / 2, button_rect.centery - button_text.get_height() / 2))
         for event in pygame.event.get () : 
-            if event.type == pygame.QUIT :  
-                running = False
+            if event.type == pygame.QUIT :
+                running = False 
             if event.type == pygame.MOUSEBUTTONDOWN : 
-                if button_rect.collidepoint (event.pos) : 
-                    print ('Click')
+                drawing = True 
+                last_pos = event.pos 
+            if event.type == pygame.MOUSEBUTTONUP : 
+                drawing = False 
+            if event.type == pygame.MOUSEMOTION : 
+                if drawing : 
+                    current_pos = event.pos 
+                    pygame.draw.line (screen, utils.BLACK, last_pos, current_pos, 10)
+                    last_pos = current_pos
         pygame.display.flip ()
+
     pygame.quit ()
+    sys.exit ()
+                
+    
