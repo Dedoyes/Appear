@@ -2,10 +2,12 @@ import pygame
 import utils
 import button
 import sys
+import numpy as np 
+from scipy.interpolate import CubicSpline
 
 if __name__ == '__main__' : 
     pygame.init ()
-    width, height = 800, 600
+    width, height = 1920, 1080
     screen = pygame.display.set_mode ((width, height))
     screen.fill (utils.WHITE)
     pygame.display.set_caption ("Appear")
@@ -26,7 +28,7 @@ if __name__ == '__main__' :
             if event.type == pygame.MOUSEMOTION : 
                 if drawing : 
                     current_pos = event.pos 
-                    pygame.draw.line (screen, utils.BLACK, last_pos, current_pos, 10)
+                    pygame.draw.aaline (screen, utils.BLACK, last_pos, current_pos)
                     last_pos = current_pos
         pygame.display.flip ()
 
