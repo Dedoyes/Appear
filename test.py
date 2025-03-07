@@ -66,9 +66,10 @@ if __name__ == '__main__':
     points = []
     running = True
 
+    finalScreen.fill (utils.WHITE)
     while running:
         # 清空主屏幕和临时 Surface
-        finalScreen.fill(utils.WHITE)  # 修复叠加问题的关键！
+        #finalScreen.fill(utils.WHITE)  # 修复叠加问题的关键！
         screen.fill((0, 0, 0, 0))
 
         current_pos = pygame.mouse.get_pos()
