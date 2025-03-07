@@ -2,6 +2,7 @@ import pygame
 import utils
 import button
 import sys
+import math
 import numpy as np 
 from scipy.interpolate import CubicSpline
 
@@ -15,9 +16,10 @@ def draw_soft_circle(surface, color, pos, radius):
         layer_radius = radius + (num_layers - i) * 2  
         
         # 绘制半透明圆
-        color = (0, 0, 0, alpha // 40)
+        color = (0, 0, 0, alpha // 10)
         #print (alpha)
-        pygame.draw.circle(surface, color, pos, int(layer_radius))
+        pygame.draw.circle (surface, (255, 255, 255, 255), pos, int (layer_radius))
+        pygame.draw.circle (surface, color, pos, int(layer_radius))
     #pygame.draw.circle(surface, (0, 0, 0, 255), pos, int(radius))
 
 
@@ -38,14 +40,9 @@ def drawLine (p0, p1, screen, width) :
         xmax = utils.max (p0.x, p1.x)
         for x in range (xmin, xmax + 1, 1) : 
             draw_soft_circle (screen, utils.ALPHABLACK, (int (x), int (p0.y)), int (width))
-    else : 
-        startPoint = p0 
-        endPoint = p1
-        if p1.x < p0.x : 
-            startPoint = p1 
-            endPoint = p0
-        x, y = startPoint.x, startPoint.y 
-        for x in range (startPoint.x, endPoint.x + 1, 1) : 
+    elif p0.x < p1.x:
+        x, y = p0.x, p0.y 
+        for x in range (p0.x, p1.x + 1, 1) : 
             draw_soft_circle (screen, utils.ALPHABLACK, (int (x), int (y)), int (width))
             nextX = x + 1
             nextY = y 
@@ -59,8 +56,22 @@ def drawLine (p0, p1, screen, width) :
             else :
                 nextY = y - 1
             y = nextY
-
-
+    else :
+        x, y = p1.x, p1.y 
+        for x in range (p0.x, p1.x - 1, -1) : 
+            draw_soft_circle (screen, utils.ALPHABLACK, (int (x), int (y)), int (width))
+            nextX = x - 1 
+            nextY = y 
+            valStill = utils.abs (utils.F (p0, p1, Point (nextX, y)))
+            valAdd = utils.abs (utils.F (p0, p1, Point (nextX, y + 1)))
+            valSub = utils.abs (utils.F (p0, p1, Point (nextX, y - 1)))
+            if (valStill <= valAdd) and (valStill <= valSub) :
+                nextY = y
+            elif (valAdd <= valStill) and (valAdd <= valSub) : 
+                nextY = y + 1
+            else :
+                nextY = y - 1
+            y = nextY
 
 if __name__ == '__main__' : 
     pygame.init ()
@@ -85,19 +96,23 @@ if __name__ == '__main__' :
        
     while running :
         #finalScreen.fill (utils.WHITE)
+        screen.fill ((0, 0, 0, 0)) 
         current_pos = pygame.mouse.get_pos ()
         if drawing and last_pos and current_pos : 
             #pygame.draw.line (screen, utils.ALPHABLACK, last_pos, current_pos, 5)
             points.append (current_pos)
-            if len (points) >= 3 : 
+            if len (points) >= 2 : 
                 #print (points)
+                 
                 for i in range (len (points) - 1) :
-                    t = 10
+                    dx = points[i + 1][0] - points[i][0]
+                    dy = points[i + 1][1] - points[i][1]
+                    t = round (math.sqrt (dx**2 + dy**2))
                     for j in range (0, t, 1) : 
-                        xj0 = points[i][0] + j * (points[i + 1][0] - points[i][0]) // t 
-                        xj1 = points[i][0] + (j + 1) * (points[i + 1][0] - points[i][0]) // t
-                        yj0 = points[i][1] + j * (points[i + 1][1] - points[i][1]) // t
-                        yj1 = points[i][1] + (j + 1) * (points[i + 1][1] - points[i][1]) // t
+                        xj0 = round (points[i][0] + j * (points[i + 1][0] - points[i][0]) / t)
+                        xj1 = round (points[i][0] + (j + 1) * (points[i + 1][0] - points[i][0]) / t)
+                        yj0 = round (points[i][1] + j * (points[i + 1][1] - points[i][1]) / t)
+                        yj1 = round (points[i][1] + (j + 1) * (points[i + 1][1] - points[i][1]) / t)
                         p0 = Point (xj0, yj0)
                         p1 = Point (xj1, yj1)
                         drawLine (p0, p1, screen, width=5)
@@ -108,9 +123,11 @@ if __name__ == '__main__' :
         for event in pygame.event.get () : 
             if event.type == pygame.QUIT :
                 running = False 
-            elif event.type == pygame.MOUSEBUTTONDOWN : 
+            elif event.type == pygame.MOUSEBUTTONDOWN :
+                print ("mouse down")
                 drawing = True  
             elif event.type == pygame.MOUSEBUTTONUP : 
+                print ("mouse up")
                 drawing = False
                 last_pos = None
                 points = []
