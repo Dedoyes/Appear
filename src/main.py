@@ -124,10 +124,10 @@ if __name__ == '__main__' :
             if event.type == pygame.QUIT :
                 running = False 
             elif event.type == pygame.MOUSEBUTTONDOWN :
-                print ("mouse down")
+                #print ("mouse down")
                 drawing = True  
             elif event.type == pygame.MOUSEBUTTONUP : 
-                print ("mouse up")
+                #print ("mouse up")
                 drawing = False
                 last_pos = None
                 points = []
