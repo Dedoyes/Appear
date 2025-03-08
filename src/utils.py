@@ -39,18 +39,21 @@ def abs (x) :
 def draw_soft_circle(surface, color, pos, radius):
     # 主圆（完全不透明黑色）    
     # 边缘模糊圆（多层半透明圆叠加）
-    num_layers = 2  # 模糊层数
-    for i in range (1, num_layers + 1):
+    num_layers = 4  # 模糊层数
+    firstColor = (color[0], color[1], color[2], 255)
+    pygame.draw.circle (surface, firstColor, pos, round (radius) + 4)
+    #screen.blit (surface, (0, 0))
+    #surface.fill ((255, 255, 255))
+    for i in range (1, num_layers):
         # 计算当前层的 Alpha 和半径扩展
-        alpha = int(100 * i / num_layers)
-        layer_radius = radius + (num_layers - i) * 2  
-        
+        alpha = 40 * i 
+        layer_radius = radius + (num_layers - i)
         # 绘制半透明圆
-        color = (0, 0, 0, alpha // 10)
+        tempColor = (color[0], color[1], color[2], alpha) 
         #print (alpha)
-        pygame.draw.circle (surface, (255, 255, 255, 255), pos, int (layer_radius))
-        pygame.draw.circle (surface, color, pos, int(layer_radius))
-    #pygame.draw.circle(surface, (0, 0, 0, 255), pos, int(radius))
+        #pygame.draw.circle (surface, (255, 255, 255, 255), pos, round (layer_radius))
+        pygame.draw.circle (surface, tempColor, pos, round (layer_radius))
+    #pygame.draw.circle(surface, (0, 0, 0, 255), pos, round (radius))
 
 def drawLine (p0, p1, screen, width) :
     #print ('drawLine')

@@ -1,12 +1,18 @@
 import pygame
+from pygame.locals import *
 import utils
 import button
 import sys
 import math
 import numpy as np 
 from scipy.interpolate import CubicSpline
+import os 
 
-if __name__ == '__main__' : 
+current_dir = os.path.dirname (os.path.abspath (__file__))
+parent_dir = os.path.dirname (current_dir)
+saves_dir = os.path.join (parent_dir, "saves")
+
+if __name__ == '__main__' :
     pygame.init ()
     width, height = 1920, 1080
     #screen.fill (utils.WHITE)
@@ -22,14 +28,11 @@ if __name__ == '__main__' :
 
     last_pos = None
     points = []
-
-    #draw_soft_circle (screen, (0, 0, 0, 127), (500, 500), 100)
-    #finalScreen.blit (screen, (0, 0))
-    #pygame.display.flip ()
-       
+     
     while running :
         #finalScreen.fill (utils.WHITE)
-        screen.fill ((0, 0, 0, 0)) 
+        screen.fill ((0, 0, 0, 0))
+        pygame.draw.circle (finalScreen, (255, 0, 0), (100, 100), 10) 
         current_pos = pygame.mouse.get_pos ()
         if drawing and last_pos and current_pos : 
             #pygame.draw.line (screen, utils.ALPHABLACK, last_pos, current_pos, 5)
@@ -48,7 +51,7 @@ if __name__ == '__main__' :
                         yj1 = round (points[i][1] + (j + 1) * (points[i + 1][1] - points[i][1]) / t)
                         p0 = utils.Point (xj0, yj0)
                         p1 = utils.Point (xj1, yj1)
-                        utils.drawLine (p0, p1, screen, width=5)
+                        utils.drawLine (p0, p1, screen, 5)
                         if p0 == p1 : 
                             break
         if drawing : 
@@ -70,6 +73,12 @@ if __name__ == '__main__' :
                 drawing = False 
                 last_pos = None
                 points = []
+            elif event.type == KEYDOWN : 
+                if event.key == K_s and (event.mod & KMOD_CTRL) : 
+                    filename = f"saves.png"
+                    fullPath = os.path.join (saves_dir, filename)
+                    pygame.image.save (finalScreen, fullPath)
+                    print ("success save as screenshot.png")
         #pygame.draw.circle (screen, (0, 0, 0, 1), (100, 100), 10) 
         finalScreen.blit (screen, (0, 0))
         pygame.display.flip ()
