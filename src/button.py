@@ -1,6 +1,6 @@
 import pygame 
 
-class Button : 
+class rectButton : 
     def __init__ (self, x, y, width, height, buttonColor, textColor, text) : 
         self.buttonX = x
         self.buttonY = y
