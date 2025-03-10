@@ -16,7 +16,7 @@ paintFilename = f"painter.png"
 paintFullPath = os.path.join (picture_dir, paintFilename)
 
 if __name__ == '__main__' :
-    print (utils.Pi)
+    print (utils.beauty)
     pygame.init ()
     width, height = 1920, 1080
     #screen.fill (utils.WHITE)
@@ -75,12 +75,12 @@ if __name__ == '__main__' :
                         yj1 = round (points[i][1] + (j + 1) * (points[i + 1][1] - points[i][1]) / t)
                         p0 = utils.Point (xj0, yj0)
                         p1 = utils.Point (xj1, yj1)
-                        utils.drawLine (p0, p1, screen, 5)
+                        utils.drawLine (p0, p1, screen, 5, utils.ALPHABLACK)
                         if p0 == p1 : 
                             break
             elif len (points) == 1 : 
                 p0 = utils.Point (round (points[0][0]), round (points[0][1]))
-                utils.drawLine (p0, p0, screen, 5) 
+                utils.drawLine (p0, p0, screen, 5, utils.ALPHABLACK) 
         if drawing : 
             last_pos = current_pos
         for event in pygame.event.get () : 

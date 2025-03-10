@@ -16,6 +16,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 Pi = math.acos (-1.0)
+beauty = 0.5 * (math.sqrt (5) - 1)
 
 def max (a, b) : 
     if a > b :
@@ -42,9 +43,9 @@ def abs (x) :
 def draw_soft_circle(surface, color, pos, radius):
     # 主圆（完全不透明黑色）    
     # 边缘模糊圆（多层半透明圆叠加）
-    num_layers = 4  # 模糊层数
+    num_layers = 2  # 模糊层数
     firstColor = (color[0], color[1], color[2], 255)
-    pygame.draw.circle (surface, firstColor, pos, round (radius) + 4)
+    pygame.draw.circle (surface, firstColor, pos, round (radius) + 1)
     #screen.blit (surface, (0, 0))
     #surface.fill ((255, 255, 255))
     for i in range (1, num_layers):
@@ -58,22 +59,22 @@ def draw_soft_circle(surface, color, pos, radius):
         pygame.draw.circle (surface, tempColor, pos, round (layer_radius))
     #pygame.draw.circle(surface, (0, 0, 0, 255), pos, round (radius))
 
-def drawLine (p0, p1, screen, width) :
+def drawLine (p0, p1, screen, width, color) :
     #print ('drawLine')
     if p0.x == p1.x : 
         ymin = min (p0.y, p1.y)
         ymax = max (p0.y, p1.y)
         for y in range (ymin, ymax + 1, 1) :                                                                                             
-            draw_soft_circle (screen, ALPHABLACK, (round (p0.x), round (y)), round (width))
+            draw_soft_circle (screen, color, (round (p0.x), round (y)), round (width))
     elif p0.y == p1.y : 
         xmin = min (p0.x, p1.x)
         xmax = max (p0.x, p1.x)
         for x in range (xmin, xmax + 1, 1) : 
-            draw_soft_circle (screen, ALPHABLACK, (round (x), round (p0.y)), round (width))
+            draw_soft_circle (screen, color, (round (x), round (p0.y)), round (width))
     elif p0.x < p1.x:
         x, y = p0.x, p0.y 
         for x in range (p0.x, p1.x + 1, 1) : 
-            draw_soft_circle (screen, ALPHABLACK, (round (x), round (y)), round (width))
+            draw_soft_circle (screen, color, (round (x), round (y)), round (width))
             nextX = x + 1
             nextY = y 
             valStill = abs (F (p0, p1, Point (nextX, y)))
@@ -89,7 +90,7 @@ def drawLine (p0, p1, screen, width) :
     else :
         x, y = p0.x, p0.y 
         for x in range (p0.x, p1.x - 1, -1) : 
-            draw_soft_circle (screen, ALPHABLACK, (round (x), round (y)), round (width))
+            draw_soft_circle (screen, color, (round (x), round (y)), round (width))
             nextX = x - 1 
             nextY = y 
             valStill = abs (F (p0, p1, Point (nextX, y)))
