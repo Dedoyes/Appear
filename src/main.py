@@ -16,6 +16,7 @@ paintFilename = f"painter.png"
 paintFullPath = os.path.join (picture_dir, paintFilename)
 
 if __name__ == '__main__' :
+    print (utils.Pi)
     pygame.init ()
     width, height = 1920, 1080
     #screen.fill (utils.WHITE)
@@ -50,6 +51,8 @@ if __name__ == '__main__' :
     while running :
         #finalScreen.fill (utils.WHITE)
         #screen.fill ((0, 0, 0, 0))
+        hiddenCircleButton = button.CircleButton ((200, 200), (255, 255, 255), 50, 0)
+        hiddenCircleButton.draw (screen)
         canavas = pygame.Surface ((width, height), pygame.SRCALPHA)
         canavas.fill ((0, 0, 0, 0))
         pygame.draw.circle (finalScreen, (255, 0, 0), (100, 100), 10) 

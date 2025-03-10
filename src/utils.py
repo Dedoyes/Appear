@@ -1,4 +1,5 @@
 import pygame
+import math
 
 class Point : 
     def __init__ (self, x, y) : 
@@ -13,6 +14,8 @@ ALPHAWHITE = (255, 255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+
+Pi = math.acos (-1.0)
 
 def max (a, b) : 
     if a > b :
@@ -61,16 +64,16 @@ def drawLine (p0, p1, screen, width) :
         ymin = min (p0.y, p1.y)
         ymax = max (p0.y, p1.y)
         for y in range (ymin, ymax + 1, 1) :                                                                                             
-            draw_soft_circle (screen, ALPHABLACK, (int (p0.x), int (y)), int (width))
+            draw_soft_circle (screen, ALPHABLACK, (round (p0.x), round (y)), round (width))
     elif p0.y == p1.y : 
         xmin = min (p0.x, p1.x)
         xmax = max (p0.x, p1.x)
         for x in range (xmin, xmax + 1, 1) : 
-            draw_soft_circle (screen, ALPHABLACK, (int (x), int (p0.y)), int (width))
+            draw_soft_circle (screen, ALPHABLACK, (round (x), round (p0.y)), round (width))
     elif p0.x < p1.x:
         x, y = p0.x, p0.y 
         for x in range (p0.x, p1.x + 1, 1) : 
-            draw_soft_circle (screen, ALPHABLACK, (int (x), int (y)), int (width))
+            draw_soft_circle (screen, ALPHABLACK, (round (x), round (y)), round (width))
             nextX = x + 1
             nextY = y 
             valStill = abs (F (p0, p1, Point (nextX, y)))
@@ -84,9 +87,9 @@ def drawLine (p0, p1, screen, width) :
                 nextY = y - 1
             y = nextY
     else :
-        x, y = p1.x, p1.y 
+        x, y = p0.x, p0.y 
         for x in range (p0.x, p1.x - 1, -1) : 
-            draw_soft_circle (screen, ALPHABLACK, (int (x), int (y)), int (width))
+            draw_soft_circle (screen, ALPHABLACK, (round (x), round (y)), round (width))
             nextX = x - 1 
             nextY = y 
             valStill = abs (F (p0, p1, Point (nextX, y)))
