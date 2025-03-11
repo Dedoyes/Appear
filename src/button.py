@@ -49,6 +49,18 @@ class CircleButton :
         dy = pos[1] - self.pos[1]
         return dx**2 + dy**2 <= self.rad**2
 
+class ColorPool : 
+    def __init__ (self, color, pos, rad) : 
+        self.color = color
+        self.pos = pos
+        self.rad = rad
+    
+    def draw (self, screen) : 
+        pygame.draw.circle (screen, (0, 0, 0), self.pos, self.rad + 2)
+        pygame.draw.circle (screen, self.color, self.pos, self.rad)
 
-
+    def isTouch (self, pos) : 
+        dx = pos[0] - self.pos[0]
+        dy = pos[1] - self.pos[1]
+        return dx**2 + dy**2 <= self.rad**2
 

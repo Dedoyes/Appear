@@ -53,6 +53,8 @@ if __name__ == '__main__' :
         #screen.fill ((0, 0, 0, 0))
         hiddenCircleButton = button.CircleButton ((200, 200), (255, 255, 255), 50, 0)
         hiddenCircleButton.draw (screen)
+        switchColor = button.ColorPool ((255, 0, 0), (1000, 1000), 8)
+        switchColor.draw (screen)
         canavas = pygame.Surface ((width, height), pygame.SRCALPHA)
         canavas.fill ((0, 0, 0, 0))
         pygame.draw.circle (finalScreen, (255, 0, 0), (100, 100), 10) 
