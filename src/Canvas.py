@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt, QPoint, QRect
 class Canvas (QWidget) : 
     def __init__ (self) : 
         super ().__init__ () 
-        self.image = QImage (1600, 1200, QImage.Format_ARGB32)
+        self.image = QImage (1920, 1080, QImage.Format_ARGB32)
         self.image.fill (QColor ("white"))
         self.drawing = False 
         self.last_point = QPoint ()

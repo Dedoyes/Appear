@@ -5,7 +5,7 @@ from PyQt5.QtGui import QColor
 class PaintApp (QMainWindow) : 
     def __init__ (self) : 
         super ().__init__ ()
-        self.setWindowTitle ("PyQt Application")
+        self.setWindowTitle ("Appear")
         self.canvas = Canvas.Canvas ()
         self.init_ui ()
 
