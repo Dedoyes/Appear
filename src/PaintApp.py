@@ -17,6 +17,8 @@ class PaintApp (QMainWindow) :
         btn_rect.clicked.connect(lambda: self.set_tool("rect"))
         btn_ellipse = QPushButton("椭圆")
         btn_ellipse.clicked.connect(lambda: self.set_tool("ellipse"))
+        btn_curve = QPushButton ("Curve")
+        btn_curve.clicked.connect (lambda: self.set_tool("curve"))
 
         # 颜色选择
         btn_color = QPushButton("选择颜色")
@@ -32,6 +34,7 @@ class PaintApp (QMainWindow) :
         toolbar.addWidget(btn_line)
         toolbar.addWidget(btn_rect)
         toolbar.addWidget(btn_ellipse)
+        toolbar.addWidget(btn_curve)
         toolbar.addWidget(btn_color)
         toolbar.addWidget(btn_clear)
         toolbar.addWidget(btn_save)
