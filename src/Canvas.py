@@ -47,6 +47,7 @@ class Canvas (QWidget) :
         temp_painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         # 重新绘制所有永久图形
         for shape in self.shapes:
+            temp_painter.setPen (QPen (shape["color"], 5, Qt.PenStyle.SolidLine))
             start = shape["start"]
             end = shape["end"]
             if shape["type"] == "line":
