@@ -86,3 +86,7 @@ class Canvas (QWidget) :
                 for point in self.temp_shape["curve"][1:]:
                     path.lineTo(point)
                 painter.drawPath(path)
+
+
+
+
