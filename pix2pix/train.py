@@ -96,7 +96,7 @@ def main () :
             opt_G.zero_grad ()
             loss_G.backward ()
             opt_G.step ()
-            if epoch == 19: 
+            if epoch == 19:
                 outPath = "./gene_picture/" + str(genePictureNum) + ".jpg"
                 save_image (fake, outPath)
                 print ("G_loss = ", loss_G)

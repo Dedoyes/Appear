@@ -1,2 +1,16 @@
 pix2pix/dcgan_params/g_net.pth filter=lfs diff=lfs merge=lfs -text
+run.bat filter=lfs diff=lfs merge=lfs -text
+run.sh filter=lfs diff=lfs merge=lfs -text
+saves filter=lfs diff=lfs merge=lfs -text
+src filter=lfs diff=lfs merge=lfs -text
+MainView.py filter=lfs diff=lfs merge=lfs -text
+picture filter=lfs diff=lfs merge=lfs -text
+ClickLabel.py filter=lfs diff=lfs merge=lfs -text
+developDocument.docx filter=lfs diff=lfs merge=lfs -text
+developDocument.md filter=lfs diff=lfs merge=lfs -text
+font filter=lfs diff=lfs merge=lfs -text
+__init__.py filter=lfs diff=lfs merge=lfs -text
+pix2pix filter=lfs diff=lfs merge=lfs -text
+README.md filter=lfs diff=lfs merge=lfs -text
+workProcess.drawio filter=lfs diff=lfs merge=lfs -text
 g_net.pth filter=lfs diff=lfs merge=lfs -text
