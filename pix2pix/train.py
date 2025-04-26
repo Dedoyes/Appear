@@ -27,42 +27,89 @@ class PairedDataset (Dataset) :
             reals = self.transforms (reals)
         return sketch, reals
 
-def main () :
-    genePictureNum = 0
+def draw () :
+    objectiveWidth = 1024
+    objectiveHeight = 1024    
     transform = transforms.Compose ([
-        transforms.Resize ((512, 512)),
+        transforms.Resize ((objectiveWidth, objectiveHeight)),
         transforms.ToTensor (),
         transforms.Normalize ((0.5,), (0.5,))
     ])
     device = torch.device ("cuda" if torch.cuda.is_available () else "cpu")
-    lr = 2e-4
-    epochs = 20
-    lambda_l1 = 100 
+    filePath = os.path.abspath (__file__)
+    dirPath = os.path.dirname (filePath)
+    paramsPath = os.path.join (dirPath, "dcgan_params")
+    netGPath = os.path.join (paramsPath, "g_net.pth")
+    basePath = os.path.dirname (dirPath)
+    savesPath = os.path.join (basePath, "saves")
+    sketchPath = os.path.join (savesPath, "save.jpg")
+    sketchImage = Image.open (sketchPath).convert ("RGB")
+    sketch = transform (sketchImage)
+    sketch = sketch.unsqueeze (0).to (device)
+    genePath = os.path.join (savesPath, "gene.jpg")
 
-    if not os.path.exists ("./dcgan_params") : 
-        os.mkdir ("./dcgan_params")
+    if not os.path.exists (netGPath) : 
+        print ("Error : no generator!")
+        return 
+    else : 
+        netG = generator.Generator (in_channels=4, out_channels=3).to (device)
+        if (os.path.getsize (netGPath) == 0) : 
+            print ("Error : the file is empty!")
+            return
+        netG.load_state_dict (torch.load (netGPath))
+        print ("generator load success.")
+        z = torch.rand (1, 1, objectiveWidth, objectiveHeight).to (device)
+        print ("sketch : ", sketch.size ())
+        print ("z : ", z.size ())
+        genePicture = netG (torch.cat ([sketch, z], dim=1))
+        save_image (genePicture, genePath)
+
+def train () :
+    objectiveWidth = 1024 
+    objectiveHeight = 1024
+    genePictureNum = 0
+    transform = transforms.Compose ([
+        transforms.Resize ((objectiveWidth, objectiveHeight)),
+        transforms.ToTensor (),
+        transforms.Normalize ((0.5,), (0.5,))
+    ])
+    device = torch.device ("cuda" if torch.cuda.is_available () else "cpu")
+    lrG = 2e-4
+    lrD = 2e-4
+    epochs = 10
+    lambda_l1 = 100 
+    
+    filePath = os.path.abspath (__file__)
+    dirPath = os.path.dirname (filePath)
+    paramsPath = os.path.join (dirPath, "dcgan_params")
+    netGPath = os.path.join (paramsPath, "g_net.pth")
+    netDPath = os.path.join (paramsPath, "d_net.pth")
+    realsReguPath = os.path.join (dirPath, "reals_regu")
+    sketchPath = os.path.join (dirPath, "sketch")
+    genePicturePath = os.path.join (dirPath, "gene_picture")
+
+    if not os.path.exists (paramsPath) : 
+        os.mkdir (paramsPath)
     print (device)
     netD = discriminator.Discriminator (in_channels=6).to (device)
     netG = generator.Generator (in_channels=4, out_channels=3).to (device)
-    d_weight_file = r"./dcgan_params/d_net.pth" 
-    g_weight_file = r"./dcgan_params/g_net.pth"
-    if os.path.exists (d_weight_file) and os.path.getsize (d_weight_file) != 0 : 
-        netD.load_state_dict (torch.load (d_weight_file))
+    if os.path.exists (netDPath) and os.path.getsize (netDPath) != 0 : 
+        netD.load_state_dict (torch.load (netDPath))
         print ("Discriminator load success.")
     else : 
         netD.apply (generator.weight_init_normal)
         print ("Discriminator random parameters generate success.")
-    if os.path.exists (g_weight_file) and os.path.getsize (g_weight_file) != 0 : 
-        netG.load_state_dict (torch.load (g_weight_file))
+    if os.path.exists (netGPath) and os.path.getsize (netGPath) != 0 : 
+        netG.load_state_dict (torch.load (netGPath))
         print ("Generator load success.")
     else : 
         netG.apply (generator.weight_init_normal)
         print ("Generator random parameters generate success.")
-    opt_G = torch.optim.Adam (netG.parameters (), lr=lr, betas=(0.5, 0.999))
-    opt_D = torch.optim.Adam (netD.parameters (), lr=lr, betas=(0.5, 0.999))
+    opt_G = torch.optim.Adam (netG.parameters (), lr=lrG, betas=(0.5, 0.999))
+    opt_D = torch.optim.Adam (netD.parameters (), lr=lrD, betas=(0.5, 0.999))
     L1 = torch.nn.L1Loss ()
     BCE = torch.nn.BCEWithLogitsLoss ()
-    dataset = PairedDataset ("./sketch", "./reals_regu/", transforms=transform)
+    dataset = PairedDataset (sketchPath, realsReguPath, transforms=transform)
     loader = DataLoader (dataset, batch_size=1, shuffle=True)
    
     print ("start training.")
@@ -71,7 +118,7 @@ def main () :
         for idx, (sketch, real) in enumerate (loader) :
             #print ("        idx = ", idx)
             sketch, real = sketch.to (device), real.to (device)
-            z = torch.randn (1, 1, 512, 512).to (device)
+            z = torch.randn (1, 1, objectiveWidth, objectiveHeight).to (device)
             g_input = torch.cat ([sketch, z], dim=1)
             fake = netG (g_input).detach ()
             #print ("sketch size : ", sketch.shape)
@@ -96,15 +143,22 @@ def main () :
             opt_G.zero_grad ()
             loss_G.backward ()
             opt_G.step ()
-            if epoch == 19:
-                outPath = "./gene_picture/" + str(genePictureNum) + ".jpg"
+            if idx % 10 == 0 : 
+                print ("idx = ", idx)
+            if epoch == epochs - 1 and idx % 5 == 0:
+                outPath = os.path.join (genePicturePath, str(genePictureNum) + ".jpg")
                 save_image (fake, outPath)
                 print ("G_loss = ", loss_G)
-                print ("D_loss = ", loss_D)  
+                print ("D_loss = ", loss_D)
+                print ("L1_loss = ", loss_G_l1)
                 genePictureNum = genePictureNum + 1
-    torch.save (netG.state_dict (), "./dcgan_params/g_net.pth")
-    torch.save (netD.state_dict (), "./dcgan_params/d_net.pth")
+    torch.save (netG.state_dict (), netGPath)
+    torch.save (netD.state_dict (), netDPath)
 
 if __name__ == '__main__' : 
-    main ()
+    opt = int (input ("please input the opt, 1 for train, other for draw : "))
+    if opt == 1 : 
+        train () 
+    else : 
+        draw ()
 

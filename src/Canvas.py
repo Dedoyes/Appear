@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import  QWidget
 from PyQt5.QtGui import QPainter, QPainterPath, QPen, QColor, QImage 
-from PyQt5.QtCore import Qt, QPoint, QRect 
+from PyQt5.QtCore import Qt, QPoint, QRect
+import os
 
 class Canvas (QWidget) : 
     def __init__ (self) : 
@@ -12,6 +13,25 @@ class Canvas (QWidget) :
         self.current_shape = "line"
         self.pen_color = QColor ("black")
         self.shapes = []
+
+    def saveAsJPG (self) : 
+        scriptDir = os.path.dirname (os.path.abspath (__file__))
+        parentDir = os.path.dirname (scriptDir)
+        savePath = os.path.join (parentDir, "saves")
+        if not os.path.exists (savePath) : 
+            os.makedirs (savePath) 
+        savePath = os.path.join (savePath, "save.jpg")
+        savePath = os.path.abspath (savePath)
+        print (self.image.size ())
+        print (savePath)
+        if self.image.isNull () : 
+            print ("Error : picture is empty, can not be saved!") 
+            return 
+        status = self.image.save (savePath, "JPG")
+        if status : 
+            print ("Save success.")
+        else :
+            print ("Error : save failed!")
 
     def mousePressEvent (self, event) :
         if event.button () == Qt.MouseButton.LeftButton: 

@@ -62,9 +62,5 @@ class PaintApp (QMainWindow) :
         self.canvas.update()
 
     def save_image(self):
-        file_path, _ = QFileDialog.getSaveFileName(self, "保存图片", "", "PNG Image (*.png)")
-        if file_path:
-            print ("save Path : ", file_path)
-            self.canvas.image.save(file_path, "PNG")
-
+        self.canvas.saveAsJPG ()
 
