@@ -1,8 +1,12 @@
 import cv2 
 import numpy as np 
 from pathlib import Path 
+import os
 
-folder = Path ('./reals/')
+filePath = os.path.abspath (__file__)
+realsPath = os.path.join (os.path.dirname (filePath), "reals")
+print ("realsPath : ", realsPath)
+folder = Path (realsPath)
 objectiveWidth = 1024
 objectiveHeight = 1024
 
