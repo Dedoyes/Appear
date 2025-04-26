@@ -14,3 +14,4 @@ pix2pix filter=lfs diff=lfs merge=lfs -text
 README.md filter=lfs diff=lfs merge=lfs -text
 workProcess.drawio filter=lfs diff=lfs merge=lfs -text
 g_net.pth filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
