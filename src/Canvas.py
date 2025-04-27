@@ -1,18 +1,36 @@
-from PyQt5.QtWidgets import  QWidget
-from PyQt5.QtGui import QPainter, QPainterPath, QPen, QColor, QImage 
+from PyQt5.QtWidgets import  QFileDialog, QWidget
+from PyQt5.QtGui import QPainter, QPainterPath, QPen, QColor, QImage, QPixmap 
 from PyQt5.QtCore import Qt, QPoint, QRect
 import os
 
 class Canvas (QWidget) : 
     def __init__ (self) : 
         super ().__init__ () 
-        self.image = QImage (1920, 1080, QImage.Format_ARGB32)
+        self.image = QImage (1024, 1024, QImage.Format_ARGB32)
         self.image.fill (QColor ("white"))
-        self.drawing = False 
+        self.drawing = False
         self.last_point = QPoint ()
         self.current_shape = "line"
         self.pen_color = QColor ("black")
         self.shapes = []
+
+    def importJPG (self, specPath="") :
+        if specPath != "" : 
+            filePath = specPath
+        else : 
+            filePath, _ = QFileDialog.getOpenFileName (self, "chose picture", "", "Image Files (*.jpg)")
+        if filePath : 
+            image = QImage (filePath)
+            if image.isNull () : 
+                print ("Error : loading picture failed!") 
+            else : 
+                print ("Picture loading success.")
+                pixmap = QPixmap (filePath)
+                self.temp_shape = {
+                    "type" : "image",
+                    "image" : pixmap
+                }
+                self.shapes.append (self.temp_shape)
 
     def saveAsJPG (self) : 
         scriptDir = os.path.dirname (os.path.abspath (__file__))
@@ -61,12 +79,15 @@ class Canvas (QWidget) :
 
     def paintEvent (self, event) :
             # 先重新填充白色，重置画布
-        self.image.fill(QColor("white"))
+        self.image.fill (QColor ("white"))
         temp_painter = QPainter(self.image)
         temp_painter.setPen(QPen(self.pen_color, 5, Qt.PenStyle.SolidLine))
         temp_painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         # 重新绘制所有永久图形
         for shape in self.shapes:
+            if shape["type"] == "image" : 
+                temp_painter.drawPixmap (0, 0, shape["image"])
+                continue
             temp_painter.setPen (QPen (shape["color"], 5, Qt.PenStyle.SolidLine))
             start = shape["start"]
             end = shape["end"]
