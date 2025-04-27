@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5057289289cf498c2da63c4d6b10f24c4d4c86f3c544f107e6c834758d615587
-size 212
+#Appear
+
+if you want to run the program such as ./test/button_test.py
+please use 'python3 -m test.button_test' at .../Appear/
+
+if you want to run the main program 
+please use 'python3 src/main.py' at .../Appear/
