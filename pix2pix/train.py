@@ -36,6 +36,7 @@ def draw () :
         transforms.Normalize ((0.5,), (0.5,))
     ])
     device = torch.device ("cuda" if torch.cuda.is_available () else "cpu")
+    print(device)
     filePath = os.path.abspath (__file__)
     dirPath = os.path.dirname (filePath)
     paramsPath = os.path.join (dirPath, "dcgan_params")
@@ -47,7 +48,6 @@ def draw () :
     sketch = transform (sketchImage)
     sketch = sketch.unsqueeze (0).to (device)
     genePath = os.path.join (savesPath, "gene.jpg")
-
     if not os.path.exists (netGPath) : 
         print ("Error : no generator!")
         return 
@@ -56,7 +56,7 @@ def draw () :
         if (os.path.getsize (netGPath) == 0) : 
             print ("Error : the file is empty!")
             return
-        netG.load_state_dict (torch.load (netGPath))
+        netG.load_state_dict (torch.load (netGPath, map_location=device))
         print ("generator load success.")
         z = torch.rand (1, 1, objectiveWidth, objectiveHeight).to (device)
         print ("sketch : ", sketch.size ())

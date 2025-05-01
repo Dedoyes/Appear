@@ -12,19 +12,35 @@ class Canvas (QWidget) :
         self.last_point = QPoint ()
         self.current_shape = "line"
         self.pen_color = QColor ("black")
+        self.pen_size = 5  # 默认画笔粗细
         self.shapes = []
+        
+        # 设置画布样式 - 苹果风格
+        self.setStyleSheet("""
+            QWidget {
+                background-color: white;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+            }
+        """)
+        
+        # 设置最小尺寸
+        self.setMinimumSize(800, 600)
+        
+        # 设置鼠标追踪，以便在绘制曲线时更流畅
+        self.setMouseTracking(True)
 
     def importJPG (self, specPath="") :
         if specPath != "" : 
             filePath = specPath
         else : 
-            filePath, _ = QFileDialog.getOpenFileName (self, "chose picture", "", "Image Files (*.jpg)")
+            filePath, _ = QFileDialog.getOpenFileName (self, "选择图片", "", "Image Files (*.jpg *.png *.bmp)")
         if filePath : 
             image = QImage (filePath)
             if image.isNull () : 
-                print ("Error : loading picture failed!") 
+                print ("错误: 加载图片失败!")
             else : 
-                print ("Picture loading success.")
+                print ("图片加载成功。")
                 pixmap = QPixmap (filePath)
                 self.temp_shape = {
                     "type" : "image",
@@ -43,13 +59,13 @@ class Canvas (QWidget) :
         print (self.image.size ())
         print (savePath)
         if self.image.isNull () : 
-            print ("Error : picture is empty, can not be saved!") 
+            print ("错误: 图片为空，无法保存!")
             return 
         status = self.image.save (savePath, "JPG")
         if status : 
-            print ("Save success.")
+            print ("保存成功。")
         else :
-            print ("Error : save failed!")
+            print ("错误: 保存失败!")
 
     def mousePressEvent (self, event) :
         if event.button () == Qt.MouseButton.LeftButton: 
@@ -60,6 +76,7 @@ class Canvas (QWidget) :
                 "start" : event.pos (),
                 "end" : event.pos (),
                 "color" : self.pen_color,
+                "size" : self.pen_size,
                 "curve" : [event.pos ()]
             }
             self.update ()
@@ -78,17 +95,22 @@ class Canvas (QWidget) :
             self.update ()
 
     def paintEvent (self, event) :
-            # 先重新填充白色，重置画布
+        # 先重新填充白色，重置画布
         self.image.fill (QColor ("white"))
         temp_painter = QPainter(self.image)
-        temp_painter.setPen(QPen(self.pen_color, 5, Qt.PenStyle.SolidLine))
+        temp_painter.setPen(QPen(self.pen_color, self.pen_size, Qt.PenStyle.SolidLine))
         temp_painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        
         # 重新绘制所有永久图形
         for shape in self.shapes:
             if shape["type"] == "image" : 
                 temp_painter.drawPixmap (0, 0, shape["image"])
                 continue
-            temp_painter.setPen (QPen (shape["color"], 5, Qt.PenStyle.SolidLine))
+                
+            # 使用形状中保存的画笔粗细
+            pen_size = shape.get("size", self.pen_size)
+            temp_painter.setPen (QPen (shape["color"], pen_size, Qt.PenStyle.SolidLine))
+            
             start = shape["start"]
             end = shape["end"]
             if shape["type"] == "line":
@@ -105,14 +127,14 @@ class Canvas (QWidget) :
                 temp_painter.drawPath(path)
         temp_painter.end()
 
-    # 再在 widget 上绘制最终图像
+        # 在 widget 上绘制最终图像
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.drawImage(0, 0, self.image)
 
-    # 如果正在绘制，则额外绘制临时图形（用于预览）
+        # 如果正在绘制，则额外绘制临时图形（用于预览）
         if self.drawing:
-            painter.setPen(QPen(self.pen_color, 5, Qt.PenStyle.SolidLine))
+            painter.setPen(QPen(self.pen_color, self.pen_size, Qt.PenStyle.SolidLine))
             start = self.temp_shape["start"]
             end = self.temp_shape["end"]
             if self.current_shape == "line":
